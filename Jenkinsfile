@@ -10,10 +10,37 @@ pipeline {
     }
 
     stage('Fluffy Test') {
-      steps {
-        sh 'chmod u+x ./jenkins/test-all.sh ./jenkins/test-backend.sh ./jenkins/test-frontend.sh ./jenkins/test-static.sh ./jenkins/test-performance.sh'
-        sh './jenkins/test-all.sh'
-        junit '****/surefire-reports/**/*.xml'
+      parallel {
+        stage('Backend') {
+          steps {
+            sh 'chmod u+x ./jenkins/test-backend.sh'
+            sh './jenkins/test-backend.sh'
+            junit 'target/surefire-reports/**/TEST*.xml'
+          }
+        }
+
+        stage('Frontend') {
+          steps {
+            sh 'chmod u+x ./jenkins/test-frontend.sh'
+            sh './jenkins/test-frontend.sh'
+            junit 'target/test-results/**/TEST*.xml'
+          }
+        }
+
+        stage('Performance') {
+          steps {
+            sh 'chmod u+x ./jenkins/test-performance.sh'
+            sh './jenkins/test-performance.sh'
+          }
+        }
+
+        stage('Static') {
+          steps {
+            sh 'chmod u+x ./jenkins/test-static.sh'
+            sh './jenkins/test-static.sh'
+          }
+        }
+
       }
     }
 

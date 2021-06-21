@@ -46,6 +46,7 @@ pipeline {
 
     stage('Fluffy Deploy') {
       steps {
+        input(message: 'Confirm Deploy', ok: 'Yes')
         sh './jenkins/deploy.sh staging'
       }
     }
